@@ -35,16 +35,17 @@ typedef struct boardconfig{
     }
     void deleteMove(move *to_remove){
         move *prev = head;
-        while(prev->next != NULL &&  prev->next != to_remove){
-            prev = prev->next;
+        move *current = head->next;
+        while(current != NULL && current!= to_remove){
+            prev = current;
+            current = current->next;
         }
-        if(prev->next == NULL){
-            std::cout<<"Move Not Found\n";
+        if(current == NULL){
+            std::cout<<"No Move Found !\n";
             return;
         }
-        delete(to_remove);
-        prev->next = prev->next->next;
-        to_remove = NULL;
+        prev->next = current->next;
+        delete(current);
         possible_moves--;
     }
     move* getMoveRandom(){
@@ -57,15 +58,15 @@ typedef struct boardconfig{
         return temp;
     }
     static bool match(boardconfig* t1, CELL t2[3][3]){
-    for(int i = 0 ; i < 3 ; i++){
-        for(int j = 0 ; j < 3 ; j++){
-            if(t1->for_board[i][j] != t2[i][j]){
-                return false;
+        for(int i = 0 ; i < 3 ; i++){
+            for(int j = 0 ; j < 3 ; j++){
+                if(t1->for_board[i][j] != t2[i][j]){
+                    return false;
+                }
             }
         }
+        return true;
     }
-    return true;
-}
     void display(){
         if(head == NULL){
             return;

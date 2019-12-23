@@ -3,6 +3,8 @@
 #include<stdlib.h>
 
 void HexaPawn::init(){
+    no_times_player_wins = 0;
+    winner = NULL;
     movements = new Movement();
     //Step 2
     int stn = 2;
@@ -45,6 +47,11 @@ void HexaPawn::init(){
     {
     CELL newboard[3][3] = {{C,B,C},{P,B,B},{B,B,P}};
     movements->addMove(stn,newboard,0,2,1,2);
+    }
+    {
+    CELL newboard[3][3] = {{C,C,B},{P,P,C},{B,B,P}};
+    movements->addMove(stn,newboard,0,0,1,1);
+    movements->addMove(stn,newboard,0,1,1,0);
     }
     {
     CELL newboard[3][3] = {{C,B,C},{P,P,B},{B,P,B}};
@@ -142,14 +149,15 @@ HexaPawn::HexaPawn(){
 
 void HexaPawn::preRoundSetup(){
     for(int i = 0 ; i < 3 ; i++){
-        board[0][i] = mirrorboard[0][i] = prevboard[0][i] = prevmirrotboard[0][i] =  C;
-        board[1][i] = mirrorboard[1][i] = prevboard[1][i] = prevmirrotboard[1][i] = B;
-        board[2][i] = mirrorboard[2][i] = prevboard[2][i] = prevmirrotboard[2][i] =  P;
+        board[0][i] = mirrorboard[0][i] = prevboard[0][i] = prevmirrorboard[0][i] =  C;
+        board[1][i] = mirrorboard[1][i] = prevboard[1][i] = prevmirrorboard[1][i] = B;
+        board[2][i] = mirrorboard[2][i] = prevboard[2][i] = prevmirrorboard[2][i] =  P;
     }
     prev_move = NULL;
     step_number = 0;
     players_turn = false;
     mirrorMatch = false;
+    current_round_no++;
 }
 
 char HexaPawn::getSymbol(CELL in){
@@ -217,8 +225,10 @@ bool HexaPawn::gameOver(){
 }
 
 void HexaPawn::makeMovement(int from_i, int from_j, int to_i, int to_j){
-    memcpy(prevboard,board,sizeof(board));
-    memcpy(prevmirrotboard,mirrorboard,sizeof(board));
+    if(!players_turn){
+        memcpy(prevboard,board,sizeof(board));
+        memcpy(prevmirrorboard,mirrorboard,sizeof(board));
+    }
     board[to_i][to_j] = board[from_i][from_j];
     board[from_i][from_j] = B;
 
@@ -281,27 +291,39 @@ void HexaPawn::playRound(){
     int from_i, from_j, to_i, to_j;
     while(!gameOver()){
         step_number++;
+        system("clear");
         players_turn = !players_turn;
-        //system("clear");
+        if(current_round_no != 1){
+            std::cout<<"_____________________\n";
+            std::cout<<"WIN HISTORY\n";
+            LinkedList::displayList(winner);
+            std::cout<<"PLAYER WIN RATE : "<<(no_times_player_wins/(current_round_no-1))<<"\n";
+            std::cout<<"_____________________\n";
+        }
+        std::cout<<"=========| STEP NUMBER = "<<step_number<<" |=========\n";
         displayBoard();
         if(players_turn){
+            std::cout<<"PLAYERS MOVE\n";
             playersMove();
         }else{
+            std::cout<<"COMPUTERS MOVE\n";
             usleep(30000);
             computersMove();
         }
     }
-    //system("clear");
+    system("clear");
     displayBoard();
     if(players_turn){
-        std::cout<<"Computer Lost!"<<step_number<<"\nRemoving !\n";
-        prev_move->display();
-        std::cout<<"-------------------------------\n";
-        //movements->displayMovements();
-        movements->removeMove(step_number - 1,prevboard,prev_move);
-        //std::cout<<"=================================================================================\n";
-        //movements->displayMovements();
+        no_times_player_wins++;
+        std::cout<<"PLAYER WON!\n";
+        winner = LinkedList::addToList(winner,'P');
+        if(mirrorMatch){
+            movements->removeMove(step_number - 1,prevmirrorboard,prev_move);
+        }else{
+            movements->removeMove(step_number - 1,prevboard,prev_move);
+        }
     }else{
+        winner = LinkedList::addToList(winner,'C');
         std::cout<<"COMPUTER WON!\n";
     }
 }

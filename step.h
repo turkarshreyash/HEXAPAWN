@@ -38,7 +38,7 @@ typedef struct step{
     }
     void removeMovement(CELL arr[3][3], move *to_remove){
         boardconfig *temp = head->next;
-        while(temp != NULL && boardconfig::match(temp,arr)){
+        while(temp != NULL && !boardconfig::match(temp,arr)){
             temp = temp->next;
         }
         if(temp== NULL){

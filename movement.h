@@ -35,15 +35,20 @@ class Movement{
             return NULL;
         }
         void removeMove(int Tstep_number, CELL arr[3][3], move *to_remove){
-            step *temp = head->next;
-            while(temp != NULL && temp->step_number < Tstep_number){
-                temp = temp->next;
+            step *current = head->next;
+            while(current != NULL && current->step_number < Tstep_number){
+                current = current->next;
             }
-            if(temp != NULL && temp->step_number == Tstep_number){
-                return temp->removeMovement(arr,to_remove);
+
+            if(current == NULL || current->step_number != Tstep_number){
+                std::cout<<"Step Not!\n";
+                return;
             }
-            std::cout<<"Step Not!\n";
-            return;
+            if(current->step_number == Tstep_number){
+                current->removeMovement(arr,to_remove);
+            }
+            
+
         }
         void displayMovements(){
             if(head == NULL){
