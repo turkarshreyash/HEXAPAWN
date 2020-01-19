@@ -6,7 +6,7 @@ Player goes first hence move of player occur in odd number.
 Therefore, computer's move are even numbered. All possible moves for computer for a particular board configuration are stored in a 'Movement' type datastructure.
 
 ### 'Movement' - DS to store moves
-      ___________________    
+`     ___________________    
 head->|      next       | ---------------------------------------------------------------------------->... \
       |   step_number   |     __________________    \
       |   boardconfigs  |  -> |      next      | ------------------------------------------------->...\
@@ -17,7 +17,7 @@ head->|      next       | ------------------------------------------------------
                                                     |     to_i     |    |     to_i     | \
                                                     |     to_i     |    |     to_i     | \
                                                     |______________|    |______________| \
-
+`
 ### Computers move
 After player has played his/her move, computer will look for stored moves corresponding to step_number and board configuration in 'Movement'-DS, and then select a random move from all possibls moves.
 If computer makes a losing move, that move is removed from the 'Movement'-DS so that computer can't take that move again.
